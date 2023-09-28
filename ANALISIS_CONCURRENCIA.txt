@@ -1,0 +1,18 @@
+Qué condiciones de carrera se podrían presentar? 
+* Pueden realizar cambios en un plano al mismo tiempo que alguien lo está buscando. Esto causa un problema de datos inconsistentes, ya que el plano que se 
+  encuentra en la búsqueda puede no tener la misma información que tenía cuando se inició la búsqueda.
+
+* puede agregar un nuevo plano al mismo tiempo que alguien está buscando planos existentes. Esto crea problemas de datos inconsistentes, ya que la cantidad 
+  de planos que se muestra en la búsqueda no coincide con la cantidad de planos que existen en ese momento después de agregar el nuevo plano.
+
+Cuales son las respectivas regiones críticas?  
+  las secciones de código donde se realizan operaciones que pueden causar inconsistencias en los datos debido a la concurrencia de múltiples hilos o procesos. 
+  En este caso, las regiones críticas son las operaciones de consulta y modificación de los planos en el sistema. (GET,POST,PUT,DELETE)
+
+Solucion Aplicada  
+  hemos implementado una estrategia para hacer que la persistencia de datos sea "Thread-Safe". En este caso, la implementación de persistencia utilizada es 
+  InMemoryBlueprintPersistence. Esto significa que ahora el recurso compartido, que es el mapa blueprints, no puede ser accedido por más de un hilo simultáneamente. 
+  Anteriormente, había condiciones de carrera donde la consulta y la inserción podían ocurrir al mismo tiempo, lo que resultaba en inconsistencias en los datos. 
+  Para abordar estas regiones críticas, hemos modificado el mapa blueprints para que sea de tipo atómico utilizando ConcurrentHashMap. Como resultado, cada hilo debe 
+  esperar su turno para ejecutar sus funciones, lo que garantiza que las operaciones se realicen de manera segura y consistente sin interferir unas con otras. 
+  Esto mejora la integridad de los datos y evita problemas de concurrencia en la aplicación.
